@@ -1,16 +1,206 @@
+
+---
+
 # Fitness Tracker API
 
-A RESTful API for a fitness tracker built with FastAPI. Supports user management, exercise library, workout logging, and statistics. Implements JWT authentication and includes OpenAPI documentation.
+Данный проект представляет собой RESTful API для системы отслеживания фитнес-активности. API реализован с использованием **FastAPI**, поддерживает аутентификацию через **JWT**, управление пользователями, упражнениями и тренировками, а также предоставляет функционал для получения статистики. Документация API формируется автоматически с помощью **OpenAPI**.
 
-## Features
-- User registration and login (JWT)
-- Search users by login or by name/surname mask
-- Manage exercises (create, list)
-- Create workouts and add exercises to them
-- Retrieve workout history and statistics for a date range
-- In-memory storage (can be replaced with SQLite)
-- Automatic OpenAPI docs at `/docs`
+---
 
-## Run Locally
+## 1. Возможности проекта
 
-1. Clone the repository:
+* Регистрация и аутентификация пользователей с использованием JWT
+* Поиск пользователей по логину или маске имени/фамилии
+* Создание и просмотр упражнений
+* Создание тренировок и добавление упражнений в тренировку
+* Получение истории тренировок
+* Подсчёт статистики за указанный диапазон дат
+* Хранение данных в оперативной памяти (in-memory storage)
+* Автоматическая документация API (`/docs`)
+
+---
+
+## 2. Установка и запуск локально
+
+### 2.1 Клонирование репозитория
+
+```bash
+git clone https://github.com/your-repo/fitness-tracker-api.git
+cd fitness-tracker-api
+```
+
+### 2.2 Создание виртуального окружения
+
+```bash
+python -m venv venv
+```
+
+Активация окружения:
+
+* Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+* Linux / MacOS:
+
+```bash
+source venv/bin/activate
+```
+
+### 2.3 Установка зависимостей
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2.4 Запуск приложения
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Документация API доступна по адресу:
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+## 3. Запуск с использованием Docker
+
+1. Построение и запуск контейнера:
+
+```bash
+docker-compose up --build
+```
+
+2. API будет доступен по адресу:
+
+```
+http://localhost:8000
+```
+
+---
+
+## 4. Аутентификация
+
+Для доступа к защищённым эндпоинтам используется JWT-токен.
+
+### 4.1 Регистрация пользователя
+
+```
+POST /auth/register
+```
+
+Пример запроса:
+
+```json
+{
+  "username": "ivan",
+  "first_name": "Иван",
+  "last_name": "Иванов",
+  "password": "secret"
+}
+```
+
+### 4.2 Авторизация пользователя
+
+```
+POST /auth/login
+```
+
+Форма данных (Form data):
+
+```
+username=ivan
+password=secret
+```
+
+Ответ содержит `access_token`, который необходимо использовать в заголовке `Authorization: Bearer <token>` для защищённых запросов.
+
+---
+
+## 5. Эндпоинты API
+
+### 5.1 Пользователи (публичные)
+
+* `GET /users/login/{login}` — получить информацию о пользователе по логину
+* `GET /users/search?first_name=&last_name=` — поиск пользователей по маске имени и фамилии
+
+### 5.2 Упражнения (публичные)
+
+* `POST /exercises/` — создать новое упражнение
+* `GET /exercises/` — получить список всех упражнений
+
+### 5.3 Тренировки (защищённые, требуется JWT)
+
+* `POST /workouts/` — создать новую тренировку
+* `POST /workouts/{id}/exercises` — добавить упражнение в тренировку
+* `GET /workouts/history` — получить историю тренировок текущего пользователя
+* `GET /workouts/stats?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` — получить статистику по тренировкам за период
+
+---
+
+## 6. Тестирование
+
+Для запуска тестов используется **pytest**:
+
+```bash
+pytest tests/
+```
+
+Тесты покрывают регистрацию, авторизацию, создание пользователей, упражнений и тренировок, а также получение статистики.
+
+---
+
+## 7. Структура проекта
+
+```
+fitness-tracker-api/
+├── app/                # Основной код приложения
+├── tests/              # Модульные тесты
+├── Dockerfile          # Конфигурация Docker
+├── docker-compose.yml  # Компоновка Docker
+├── requirements.txt    # Зависимости Python
+└── README.md           # Документация проекта
+```
+
+---
+
+## 8. OpenAPI документация
+
+Документация доступна автоматически:
+
+```
+/docs        — интерактивная Swagger UI
+/openapi.json — JSON спецификация OpenAPI
+```
+
+---
+
+## 9. Переменные окружения
+
+| Переменная | Назначение                       |
+| ---------- | -------------------------------- |
+| SECRET_KEY | Секретный ключ для генерации JWT |
+
+> Рекомендуется менять значение `SECRET_KEY` перед развертыванием в продакшн.
+
+---
+
+## 10. Примечания
+
+* Хранение данных осуществляется в памяти, данные теряются при перезапуске приложения
+* Для постоянного хранения можно интегрировать SQLite или PostgreSQL
+* Пароли пользователей хранятся в виде хэшей с использованием алгоритма bcrypt
+
+---
+
+## 11. Лицензия
+
+Проект распространяется под лицензией **MIT**.
+
+---
