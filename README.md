@@ -25,7 +25,7 @@
 ### 2.1 Клонирование репозитория
 
 ```bash
-git clone https://github.com/your-repo/fitness-tracker-api.git
+git clone https://github.com/KasemMAlkhalaf/fitness-tracker-api.git
 cd fitness-tracker-api
 ```
 
